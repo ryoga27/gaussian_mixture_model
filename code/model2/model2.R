@@ -153,23 +153,23 @@ gaussian_mixture_model = function(
     n = nrow(x)
     d = ncol(x)
 
-    mu = array(NA, dim = c(d, K, iter_max + 1))
-    z = array(NA, dim = c(n, iter_max))
-    tau = rep(NA, length = iter_max + 1)
-    p = array(NA, dim = c(K, iter_max + 1))
+    mu_array = array(NA, dim = c(d, K, iter_max + 1))
+    z_array = array(NA, dim = c(n, iter_max))
+    tau_vec = rep(NA, length = iter_max + 1)
+    p_array = array(NA, dim = c(K, iter_max + 1))
 
-    mu[, , 1] = set_initial_mu(x = x, K = K)
-    tau[1] = tau0
-    p[, 1] = p0
+    mu_array[, , 1] = set_initial_mu(x = x, K = K)
+    tau_vec[1] = tau0
+    p_array[, 1] = p0
 
     for(s in 1:iter_max){
-        z[, s] = gibbs_sampling_z(x = x, K = K, mu = mu[, , s], p = p[, 1])
-        mu[, , s + 1] = gibbs_sampling_mu(x = x, K = K, z = z[, s], mu0 = mu0, tau = tau[1], rho0 = rho0)
-        tau[s + 1] = gibbs_sampling_tau(x = x, K = K, z = z[, s], mu0 = mu0, rho0 = rho0, a0 = a0, b0 = b0)
-        p[, s + 1] = gibbs_sampling_p(x = x, K = K, z[, s], alpha = alpha0)
+        z_array[, s] = gibbs_sampling_z(x = x, K = K, mu = mu_array[, , s], p = p_array[, s])
+        mu_array[, , s + 1] = gibbs_sampling_mu(x = x, K = K, z = z_array[, s], mu0 = mu0, tau = tau_vec[s], rho0 = rho0)
+        tau_vec[s + 1] = gibbs_sampling_tau(x = x, K = K, z = z_array[, s], mu0 = mu0, rho0 = rho0, a0 = a0, b0 = b0)
+        p_array[, s + 1] = gibbs_sampling_p(x = x, K = K, z_array[, s], alpha = alpha0)
         if(s %% 100 == 0){
             cat("number of iteration is:", s, "\n")
-            cat("class is:", z_map(z[, 1:s], K = K), "\n")
+            cat("class is:", z_map(z_array[, 1:s], K = K), "\n")
         }
     }
 
