@@ -1,3 +1,6 @@
+if(require(mvtnorm) == FALSE){
+    install.packages("mvtnorm", dependencies = TRUE)
+}
 library(mvtnorm)
 
 set_initial_mu = function(x, K){

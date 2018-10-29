@@ -1,5 +1,11 @@
-library(mvtnorm)
+if(require(MCMCpack) == FALSE){
+    install.packages("mvtnorm", dependencies = TRUE)
+}
+if(require(mvtnorm) == FALSE){
+    install.packages("mvtnorm", dependencies = TRUE)
+}
 library(MCMCpack)
+library(mvtnorm)
 
 set_initial_mu = function(x, K){
     n = nrow(x)
