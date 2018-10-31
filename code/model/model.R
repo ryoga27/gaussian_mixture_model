@@ -98,25 +98,25 @@ gaussian_mixture_model = function(
     n = nrow(x)
     d = ncol(x)
 
-    mu = array(NA, dim = c(d, K, iter_max + 1))
-    z = array(NA, dim = c(n, iter_max))
+    mu_array = array(NA, dim = c(d, K, iter_max + 1))
+    z_array = array(NA, dim = c(n, iter_max))
 
-    mu[, , 1] = set_initial_mu(x = x, K = K)
+    mu_array[, , 1] = set_initial_mu(x = x, K = K)
 
     for(s in 1:iter_max){
-        z[, s] = gibbs_sampling_z(x = x, K = K, mu = mu[, , s])
-        mu[, , s + 1] = gibbs_sampling_mu(x = x, K = K, z = z[, s], mu0 = mu0, sigma0 = sigma0)
+        z_array[, s] = gibbs_sampling_z(x = x, K = K, mu = mu_array[, , s])
+        mu_array[, , s + 1] = gibbs_sampling_mu(x = x, K = K, z = z_array[, s], mu0 = mu0, sigma0 = sigma0)
         if(s %% 100 == 0){
             cat("number of iteration is:", s, "\n")
-            cat("class is:", z_map(z[, 1:s], K = K), "\n")
+            cat("class is:", z_map(z_array[, 1:s], K = K), "\n")
         }
     }
 
     args_list = list(
-        z = z[, burn_in:iter_max],
-        mu = mu[, , burn_in:iter_max],
+        z = z_array[, burn_in:iter_max],
+        mu = mu_array[, , burn_in:iter_max],
         K = K,
-        z_map  = z_map(z = z[, burn_in:iter_max], K = K)
+        z_map  = z_map(z = z_array[, burn_in:iter_max], K = K)
     )
     return(args_list)
     message("the process has finished")
